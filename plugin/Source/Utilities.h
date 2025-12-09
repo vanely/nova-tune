@@ -211,12 +211,12 @@ namespace NovaTuneUtils {
 
       // Get the interval from the top of the scale
       int indexFromTop = numNotesInScale - remainingDegrees;
-      return -(12 * (octavesDown + 1)) + scaleIntervals[indexFromTop];
+      return -(12 * (octavesDown + 1)) + scaleIntervals[static_cast<size_t>(indexFromTop)];
     } else /*Positive degrees (going up)*/ {
       int octavesUp = scaleDegree / numNotesInScale;
       int remainingDegrees = scaleDegree % numNotesInScale;
 
-      return 12 * octavesUp + scaleIntervals[remainingDegrees];
+      return 12 * octavesUp + scaleIntervals[static_cast<size_t>(remainingDegrees)];
     }
   }
 

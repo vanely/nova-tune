@@ -4,6 +4,7 @@
 #include <vector>
 #include "../DSPConfig.h"
 #include "../Utilities.h"
+#include "../ParameterIDs.h"
 
 /**
  * PitchDetector.h

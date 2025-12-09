@@ -31,28 +31,53 @@ NovaTune is a professional-grade audio plugin that provides:
    - macOS: Xcode 12+ or Clang
    - Linux: GCC 9+ or Clang 10+
 
+#### Linux-Specific Dependencies
+
+On Linux, you need to install additional system libraries for JUCE:
+
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install -y \
+    libasound2-dev \
+    libfreetype-dev \
+    libfontconfig1-dev \
+    libx11-dev \
+    libxcomposite-dev \
+    libxext-dev \
+    libxinerama-dev \
+    libxrandr-dev \
+    libxrender-dev \
+    libglu1-mesa-dev \
+    mesa-common-dev
+
+# Or use the provided setup script:
+sudo bash setup_linux_dependencies.sh
+```
+
 ### Build Steps
 
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/NovaTune.git
-cd NovaTune
+cd NovaTune/plugin
 
 # Initialize JUCE submodule (if using submodule approach)
 git submodule update --init --recursive
 
 # Create build directory
-mkdir build && cd build
+mkdir -p build && cd build
 
 # Configure (Release build for best performance)
-cmake -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_BUILD_TYPE=Release
 
 # Build
 cmake --build . --config Release
 
 # The plugin will be in:
-# - VST3: build/NovaTune_artefacts/Release/VST3/
-# - AU: build/NovaTune_artefacts/Release/AU/
+# - Linux: build/NovaTune_artefacts/Release/VST3/
+# - macOS: build/NovaTune_artefacts/Release/VST3/ and build/NovaTune_artefacts/Release/AU/
+# - Windows: build/NovaTune_artefacts/Release/VST3/
 ```
 
 ## Architecture

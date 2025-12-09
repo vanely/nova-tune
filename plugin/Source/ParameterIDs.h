@@ -219,6 +219,8 @@ namespace NovaTuneEnums {
       return melodicMinor;
     case Scale::Chromatic:
       return chromatic;
+    case Scale::numScales:
+      return chromatic; // Sentinel value, shouldn't occur in practice
     default:
       return chromatic;
     }

@@ -18,15 +18,26 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -ffast-math")
 # Option 2: If JUCE is included as a git submodule (recommended)
 add_subdirectory(JUCE)
 
+# Determine which plugin formats to build based on platform
+if(APPLE)
+    set(PLUGIN_FORMATS AU VST3 Standalone)
+elseif(WIN32)
+    set(PLUGIN_FORMATS VST3 Standalone)
+else()
+    # Linux
+    set(PLUGIN_FORMATS VST3 Standalone)
+endif()
+
 # Define the plugin target
 juce_add_plugin(NovaTune
     # Plugin metadata
     COMPANY_NAME "NovaTune Audio"
     PLUGIN_MANUFACTURER_CODE Nova
     PLUGIN_CODE Nvtn
+    BUNDLE_ID "com.novatune.NovaTune"
     
-    # Plugin formats to build
-    FORMATS AU VST3 Standalone  # AU = Audio Unit (macOS), VST3 = cross-platform
+    # Plugin formats to build (platform-specific)
+    FORMATS ${PLUGIN_FORMATS}
     
     # Plugin characteristics
     PRODUCT_NAME "NovaTune"

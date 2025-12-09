@@ -202,4 +202,4 @@ private:
  * Create the parameter layout for the AudioProcessorValueTreeState.
  * This defines all the automatable parameters in the plugin.
  */
-APVTS::ParameterLayout createParameterLayout();
+juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();

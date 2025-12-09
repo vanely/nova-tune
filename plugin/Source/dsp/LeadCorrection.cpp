@@ -52,10 +52,10 @@ void LeadCorrection::reset() {
 void LeadCorrection::updateFromParameters(juce::AudioProcessorValueTreeState &apvts) {
   using namespace ParamIDs;
 
-  setRetuneSpeed(apvts.getRawParameterValue(retuneSpeed)->load());
-  setHumanize(apvts.getRawParameterValue(humanize)->load());
-  setVibrato(apvts.getRawParameterValue(vibratoAmount)->load());
-  setMix(apvts.getRawParameterValue(mix)->load() / 100.0f);
+  setRetuneSpeed(apvts.getRawParameterValue(ParamIDs::retuneSpeed)->load());
+  setHumanize(apvts.getRawParameterValue(ParamIDs::humanize)->load());
+  setVibrato(apvts.getRawParameterValue(ParamIDs::vibratoAmount)->load());
+  setMix(apvts.getRawParameterValue(ParamIDs::mix)->load() / 100.0f);
 }
 
 void LeadCorrection::setRetuneSpeed(float speed) {

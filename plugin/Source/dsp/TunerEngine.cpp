@@ -110,7 +110,7 @@ void TunerEngine::process(juce::AudioBuffer<float> &buffer,
   // Determine the target note based on the detected pitch and selected key/scale
   //==========================================================================
 
-  pitchMapper.process(pitchDetector);
+  auto mappingResult = pitchMapper.map(pitchDetector);
 
   //==========================================================================
   // STEP 3: LEAD CORRECTION
