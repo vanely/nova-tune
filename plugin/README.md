@@ -55,7 +55,30 @@ sudo apt install -y \
 sudo bash setup_linux_dependencies.sh
 ```
 
+#### Windows-Specific Prerequisites
+
+On Windows, you need to install the following:
+
+1. **CMake** (3.22 or higher)
+   - Download from: https://cmake.org/download/
+   - Or via Chocolatey: `choco install cmake`
+   - Make sure to add CMake to your PATH during installation
+
+2. **JUCE Framework** (7.0+)
+   - Already included as a submodule in `plugin/JUCE/`
+   - No additional installation needed if submodule is initialized
+
+3. **C++ Compiler** with C++17 support:
+   - **Option A: Visual Studio 2019 or newer** (Recommended)
+     - Install "Desktop development with C++" workload
+     - Includes MSVC compiler
+     - Visual Studio 2022 is recommended for best compatibility
+   - **Option B: MinGW-w64**
+     - Can be installed via MSYS2 or standalone installer
+
 ### Build Steps
+
+#### Linux/macOS
 
 ```bash
 # Clone the repository
@@ -69,7 +92,9 @@ git submodule update --init --recursive
 mkdir -p build && cd build
 
 # Configure (Release build for best performance)
-cmake .. -DCMAKE_BUILD_TYPE=Release
+# CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json for clangd/LSP tools
+# https://clangd.llvm.org/installation#project-setup
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 # Build
 cmake --build . --config Release
@@ -77,7 +102,81 @@ cmake --build . --config Release
 # The plugin will be in:
 # - Linux: build/NovaTune_artefacts/Release/VST3/
 # - macOS: build/NovaTune_artefacts/Release/VST3/ and build/NovaTune_artefacts/Release/AU/
-# - Windows: build/NovaTune_artefacts/Release/VST3/
+```
+
+#### Windows
+
+Open **Command Prompt** or **PowerShell** (or "Developer Command Prompt for VS" if using Visual Studio):
+
+```cmd
+REM Navigate to the plugin directory
+cd NovaTune\plugin
+
+REM Initialize JUCE submodule (if not already done)
+git submodule update --init --recursive
+
+REM Create build directory
+mkdir build
+cd build
+
+REM Configure with CMake
+REM For Visual Studio 2022 (64-bit Release):
+cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+REM OR for Visual Studio 2019:
+REM cmake .. -G "Visual Studio 16 2019" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+REM OR for MinGW (if using MinGW):
+REM cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+REM Build the project
+cmake --build . --config Release
+
+REM OR if using Visual Studio, you can open the generated solution:
+REM start NovaTune.sln
+REM Then build from Visual Studio IDE (Release configuration)
+```
+
+**Windows Build Notes:**
+
+- **Visual Studio Generator**: Use `-G "Visual Studio 17 2022"` for VS2022 or `-G "Visual Studio 16 2019"` for VS2019. CMake can auto-detect, but specifying ensures the correct version.
+- **Architecture**: Use `-A x64` for 64-bit builds (most common). For 32-bit, use `-A Win32` (rarely needed).
+- **Build Configuration**: On Windows with Visual Studio, you can build both Debug and Release from the same build folder:
+  ```cmd
+  cmake --build . --config Debug    # For debugging
+  cmake --build . --config Release  # For release
+  ```
+- **Plugin Installation**: With `COPY_PLUGIN_AFTER_BUILD TRUE` in CMakeLists.txt, the plugin may be automatically copied to the VST3 directory, but you may need administrator privileges.
+
+**Output Location:**
+- VST3: `build\NovaTune_artefacts\Release\VST3\NovaTune.vst3`
+- Standalone: `build\NovaTune_artefacts\Release\Standalone\NovaTune.exe`
+
+**Optional Windows Build Script:**
+
+You can create a `build_windows.bat` file in the `plugin` directory for convenience:
+
+```batch
+@echo off
+cd plugin
+git submodule update --init --recursive
+if not exist build mkdir build
+cd build
+cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build . --config Release
+echo Build complete! Plugin is in: NovaTune_artefacts\Release\VST3\
+pause
+```
+
+**Note:** The `compile_commands.json` file will be generated in the `build/` directory. This file provides build context for language servers like clangd, enabling better code completion, error checking, and IDE integration. If your IDE doesn't automatically detect it, you may need to create a symlink (Linux/macOS) or junction (Windows) in the project root:
+
+```bash
+# Linux/macOS: From the plugin directory (optional, for IDE compatibility)
+ln -s build/compile_commands.json compile_commands.json
+
+# Windows: From the plugin directory (optional, for IDE compatibility)
+# Using Command Prompt (requires admin privileges):
+mklink compile_commands.json build\compile_commands.json
 ```
 
 ## Architecture
